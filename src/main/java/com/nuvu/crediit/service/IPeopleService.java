@@ -7,4 +7,7 @@ import java.util.List;
 public interface IPeopleService {
 
     List<PeopleDto> findAllPeople();
+
+    String cretePeople(PeopleDto peopleDto);
+
 }
