@@ -47,7 +47,7 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
         clients.inMemory()
                 .withClient("NuvuId")
                 .secret(passwordEncoder.encode("NuvuSecret"))
-                .accessTokenValiditySeconds(3600)
+                .accessTokenValiditySeconds(300)
                 .scopes("read", "write")
                 .authorizedGrantTypes("password", "refresh_token", "authorization_code");
     }
