@@ -1,5 +1,6 @@
 package com.nuvu.crediit.controller;
 
+import com.nuvu.crediit.model.dto.CardDto;
 import com.nuvu.crediit.model.dto.PeopleDto;
 import com.nuvu.crediit.model.dto.RequestAddCard;
 import com.nuvu.crediit.model.dto.ResponseGeneric;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -114,5 +116,19 @@ public class PeopleController {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+    @GetMapping(value = "getcard", produces = MediaType.APPLICATION_JSON_VALUE)
+    private ResponseEntity<List<CardDto>> findCardByIdAndNumber(@RequestParam Long idNumber, @RequestParam Long idType){
+        List<CardDto> cards = new ArrayList<>();
+        try {
+            cards.addAll(peopleService.findCardByPeople(idNumber,idType));
+            return ResponseEntity.ok(cards);
+        }catch (Exception e) {
+            logger.error("Error in findByIdAndNumber {} ", e.getMessage());
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }

@@ -12,4 +12,6 @@ public interface CreditCardRepository extends JpaRepository<CreditCard, Long> {
 
     List<CreditCard> findByIdNumber(Long idNumber);
 
+    List<CreditCard> findByPeople(Long idPeople);
+
 }

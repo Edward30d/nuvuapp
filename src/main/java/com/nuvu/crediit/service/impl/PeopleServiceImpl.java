@@ -1,5 +1,6 @@
 package com.nuvu.crediit.service.impl;
 
+import com.nuvu.crediit.model.dto.CardDto;
 import com.nuvu.crediit.model.dto.PeopleDto;
 import com.nuvu.crediit.model.dto.RequestAddCard;
 import com.nuvu.crediit.model.entity.CategoryCard;
@@ -185,5 +186,32 @@ public class PeopleServiceImpl implements IPeopleService {
         return Constant.ERROR;
     }
 
-
+    @Override
+    public List<CardDto> findCardByPeople(Long idNumber, Long idType) {
+        List<CardDto> cards = new ArrayList<>();
+        try {
+            List<People> peopleList = peopleRepository
+                    .findByIdNumberAndIdType(idNumber, idType);
+            if (peopleList.isEmpty()) {
+                return cards;
+            }
+            People people = peopleList.get(0);
+            List<CreditCard> listCredit = creditCardRepository.findByPeople(people.getIdPeople());
+            listCredit.forEach(creditCard -> {
+                CardDto card = new CardDto();
+                CategoryCard categoryCard = categoryCardRespository.findByIdCard(creditCard.getCategoryCard());
+                card.setType(categoryCard.getType());
+                card.setFranchise(categoryCard.getFranchise());
+                card.setBalance(creditCard.getBalance());
+                card.setCsv(creditCard.getCsv());
+                card.setDateExpiry(creditCard.getDateExpiry());
+                card.setIdNumber(creditCard.getIdNumber());
+                cards.add(card);
+            });
+            return cards;
+        } catch (Exception e) {
+            logger.error("Error in cretePeople People {}", e.getMessage());
+        }
+        return cards;
+    }
 }

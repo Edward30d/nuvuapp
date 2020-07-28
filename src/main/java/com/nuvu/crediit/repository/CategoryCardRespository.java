@@ -10,4 +10,6 @@ import java.util.List;
 public interface CategoryCardRespository extends JpaRepository<CategoryCard , Long> {
 
     List<CategoryCard> findByTypeAndFranchise(String type, String franchise);
+
+    CategoryCard findByIdCard(Long idCard);
 }

@@ -1,5 +1,6 @@
 package com.nuvu.crediit.service;
 
+import com.nuvu.crediit.model.dto.CardDto;
 import com.nuvu.crediit.model.dto.PeopleDto;
 import com.nuvu.crediit.model.dto.RequestAddCard;
 import com.nuvu.crediit.model.entity.People;
@@ -21,5 +22,7 @@ public interface IPeopleService {
     String modifyCard(RequestAddCard requestAddCard);
 
     String deleteCard(Long idNumberCard, Long idNumber, Long idType);
+
+    List<CardDto> findCardByPeople(Long idNumber, Long idType);
 
 }
