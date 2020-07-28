@@ -94,6 +94,7 @@ public class PeopleServiceImpl implements IPeopleService {
                 people.setEmail(peopleDto.getEmail());
                 people.setLastName(peopleDto.getLastName());
                 people.setPhoneNumber(peopleDto.getPhoneNumber());
+                people.setName(peopleDto.getName());
                 peopleRepository.save(people);
                 message = Constant.EDIT_PEOPLE;
             }
