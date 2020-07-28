@@ -17,4 +17,9 @@ public interface IPeopleService {
     String editPerson (PeopleDto peopleDto);
 
     String addCard(RequestAddCard requestAddCard);
+
+    String modifyCard(RequestAddCard requestAddCard);
+
+    String deleteCard(Long idNumberCard, Long idNumber, Long idType);
+
 }

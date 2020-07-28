@@ -16,7 +16,7 @@ public class CreditCard {
     private String dateExpiry;
     private Long csv;
     private Long people;
-    private Long CategoryCard;
+    private Long categoryCard;
     private Long balance;
 
     public CreditCard() {
@@ -63,11 +63,11 @@ public class CreditCard {
     }
 
     public Long getCategoryCard() {
-        return CategoryCard;
+        return categoryCard;
     }
 
     public void setCategoryCard(Long categoryCard) {
-        CategoryCard = categoryCard;
+        this.categoryCard = categoryCard;
     }
 
     public Long getBalance() {

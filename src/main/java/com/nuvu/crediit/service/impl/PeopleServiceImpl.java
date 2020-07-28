@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +35,13 @@ public class PeopleServiceImpl implements IPeopleService {
     @Autowired
     private CreditCardRepository creditCardRepository;
 
-
     @Override
     public List<PeopleDto> findAllPeople() {
         List<PeopleDto> peopleList = new ArrayList<>();
         try {
             List<People> entityList = peopleRepository.findAll();
             entityList.forEach(p -> peopleList.add(mapper.map(p, PeopleDto.class)));
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in findAll People {}", e.getMessage());
         }
         return peopleList;
@@ -51,15 +51,15 @@ public class PeopleServiceImpl implements IPeopleService {
     public String cretePeople(PeopleDto peopleDto) {
         String message = Constant.ERROR;
         try {
-            if(peopleRepository.findByIdNumberAndIdType(peopleDto.getIdNumber(), peopleDto.getIdType())
-                    .isEmpty()){
+            if (peopleRepository.findByIdNumberAndIdType(peopleDto.getIdNumber(), peopleDto.getIdType())
+                    .isEmpty()) {
                 People people = mapper.map(peopleDto, People.class);
                 peopleRepository.save(people);
                 message = Constant.SAVE_PEOPLE;
             } else {
                 message = Constant.DUPLICATED_PEOPLE;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in cretePeople People {}", e.getMessage());
 
         }
@@ -69,8 +69,8 @@ public class PeopleServiceImpl implements IPeopleService {
     @Override
     public PeopleDto finByIdNumberAndIdType(Long idNumber, Long idType) {
         try {
-            List<People> entityList = peopleRepository.findByIdNumberAndIdType(idNumber,idType);
-            if(!entityList.isEmpty()){
+            List<People> entityList = peopleRepository.findByIdNumberAndIdType(idNumber, idType);
+            if (!entityList.isEmpty()) {
                 return mapper.map(entityList.get(0), PeopleDto.class);
             }
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class PeopleServiceImpl implements IPeopleService {
         try {
             List<People> peopleList = peopleRepository
                     .findByIdNumberAndIdType(peopleDto.getIdNumber(), peopleDto.getIdType());
-            if(peopleList.isEmpty()){
+            if (peopleList.isEmpty()) {
                 message = Constant.PEOPLE_NOT_EXISTS;
             } else {
                 People people = peopleList.get(0);
@@ -96,7 +96,7 @@ public class PeopleServiceImpl implements IPeopleService {
                 peopleRepository.save(people);
                 message = Constant.EDIT_PEOPLE;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error in cretePeople People {}", e.getMessage());
         }
         return message;
@@ -108,13 +108,13 @@ public class PeopleServiceImpl implements IPeopleService {
             List<People> peopleList = peopleRepository
                     .findByIdNumberAndIdType(requestAddCard.getPeople().getIdNumber()
                             , requestAddCard.getPeople().getIdType());
-            if(peopleList.isEmpty()){
+            if (peopleList.isEmpty()) {
                 return Constant.PEOPLE_NOT_EXISTS;
             }
             List<CategoryCard> listCategory = categoryCardRespository
                     .findByTypeAndFranchise(requestAddCard.getCard().getType()
                             , requestAddCard.getCard().getFranchise());
-            if(listCategory.isEmpty()){
+            if (listCategory.isEmpty()) {
                 return Constant.CARD_NOT_EXISTS;
             }
             People people = peopleList.get(0);
@@ -128,7 +128,58 @@ public class PeopleServiceImpl implements IPeopleService {
             creditCard.setBalance(requestAddCard.getCard().getBalance());
             creditCardRepository.save(creditCard);
             return Constant.ADD_CARD;
-        }catch (Exception e) {
+        } catch (Exception e) {
+            logger.error("Error in cretePeople People {}", e.getMessage());
+        }
+        return Constant.ERROR;
+    }
+
+    @Override
+    public String modifyCard(RequestAddCard requestAddCard) {
+        try{
+            List<People> peopleList = peopleRepository
+                    .findByIdNumberAndIdType(requestAddCard.getPeople().getIdNumber()
+                            , requestAddCard.getPeople().getIdType());
+            if (peopleList.isEmpty()) {
+                return Constant.PEOPLE_NOT_EXISTS;
+            }
+            List<CreditCard> creditCardList = creditCardRepository
+                    .findByIdNumber(requestAddCard.getCard().getIdNumber());
+            if (creditCardList.isEmpty()) {
+                return Constant.CREDIT_CARD_NOT_EXISTS;
+            }
+            CreditCard creditCard = creditCardList.get(0);
+            creditCard.setCsv(requestAddCard.getCard().getCsv());
+            creditCard.setDateExpiry(requestAddCard.getCard().getDateExpiry());
+            creditCard.setBalance(requestAddCard.getCard().getBalance());
+            creditCardRepository.save(creditCard);
+            return Constant.MODIFY_CARD;
+        } catch (Exception e) {
+            logger.error("Error in cretePeople People {}", e.getMessage());
+        }
+        return Constant.ERROR;
+    }
+
+    @Override
+    public String deleteCard(Long idNumberCard, Long idNumber, Long idType) {
+        try{
+            List<People> peopleL = peopleRepository
+                    .findByIdNumberAndIdType(idNumber, idType);
+            if (peopleL.isEmpty()) {
+                return Constant.PEOPLE_NOT_EXISTS;
+            }
+            List<CreditCard> creditCardList = creditCardRepository
+                    .findByIdNumber(idNumberCard);
+            if (creditCardList.isEmpty()) {
+                return Constant.CREDIT_CARD_NOT_EXISTS;
+            }
+            CreditCard creditCard = creditCardList.get(0);
+            if(creditCard.getPeople().equals(peopleL.get(0).getIdPeople())) {
+                creditCardRepository.delete(creditCard);
+                return Constant.DELETE_CARD;
+            }
+            return Constant.DELETE_CARD_OTHER;
+        } catch (Exception e) {
             logger.error("Error in cretePeople People {}", e.getMessage());
         }
         return Constant.ERROR;

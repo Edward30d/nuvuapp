@@ -26,10 +26,6 @@ public class PeopleController {
     @Autowired
     private IPeopleService peopleService;
 
-    @Autowired
-    private PasswordEncoder bc;
-
-
     @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<List<PeopleDto>> getAllPeople(){
         try {
@@ -56,7 +52,7 @@ public class PeopleController {
 
 
     @GetMapping(value = "find", produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity<PeopleDto> findByIdAndNumber(@RequestParam Long idNumber, Long idType){
+    private ResponseEntity<PeopleDto> findByIdAndNumber(@RequestParam Long idNumber, @RequestParam Long idType){
         try {
             PeopleDto response = peopleService.finByIdNumberAndIdType(idNumber,idType);
             if(response != null){
@@ -94,5 +90,29 @@ public class PeopleController {
         }
     }
 
+    @PostMapping(value = "modifyCard", produces = MediaType.APPLICATION_JSON_VALUE)
+    private ResponseEntity<ResponseGeneric> modifyCard (@RequestBody RequestAddCard requestAddCard) {
+        try {
+            ResponseGeneric response = new ResponseGeneric();
+            response.setMessage(peopleService.modifyCard(requestAddCard));
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            logger.error("Error in modifyCard {} ", e.getMessage());
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "deleteCard", produces = MediaType.APPLICATION_JSON_VALUE)
+    private ResponseEntity<ResponseGeneric> deleteCard(@RequestParam Long idNumberCard
+            , @RequestParam Long idNumber,  @RequestParam Long idType) {
+        try {
+            ResponseGeneric response = new ResponseGeneric();
+            response.setMessage(peopleService.deleteCard(idNumberCard, idNumber, idType));
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            logger.error("Error in deleteCard {} ", e.getMessage());
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
